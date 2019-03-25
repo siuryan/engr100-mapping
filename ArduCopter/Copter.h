@@ -134,23 +134,19 @@
 //Enum to keep track of directions
 	enum class Direction {front, back, left, right};
 
-	
-
-
-
-
-//Threshhold for moving forward, backward, left and right
-static const double distThreshhold = 0.5;
-
-//Threshold for telling the drone when it should not center
-//ex when one wall is too far away
-static const double centerThreshhold = 2;
 
 class Copter : public AP_HAL::HAL::Callbacks {
 private:
 	
-	//Static variable to keep track of backward direction
+	//Variable to keep track of backward direction
 	Direction backDirection = Direction::right;
+
+	//Threshhold for moving forward, backward, left and right
+	const double distThreshhold = g.e100_param1;
+
+	//Threshold for telling the drone when it should not center
+	//ex when one wall is too far away
+	const double centerThreshhold = g.e100_param2;
 public:
     friend class GCS_MAVLINK_Copter;
     friend class AP_Rally_Copter;
