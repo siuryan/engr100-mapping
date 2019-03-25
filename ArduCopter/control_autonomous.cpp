@@ -220,12 +220,13 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     static ofstream os("mapping_data.txt");
     static int c = 0; 
-    Vector3f accel = ins.get_accel();
     if(c%50==0){
         //c%50 can be 100. lets see what data we get.//need to understand what one second is. 
         Vector3f accel = ins.get_accel();
+	float pitch = 100.0f * g.pid_pitch.get_pid();
+	float roll = 100.0f * g.pid_roll.get_pid();
         logging(os,c,dist_forward,dist_right,dist_backward,dist_left,accel,
-        100.0f * g.pid_pitch.get_pid(),100.0f * g.pid_roll.get_pid());
+        pitch, roll);
 
     }
     
@@ -352,7 +353,7 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
 //LOGGING:
 void Copter::logging(ofstream &os,int counter,float &dist_forward, 
     float &dist_right, float &dist_backward, float &dist_left, Vector3f &accel,float &pitch,float &roll) const{
-    os<<counter<<","<<dist_right<<","<<dist_backward<<","<<dist_left<<","<<dist_forward<<","<<accel.getX()<<","<<
-    accel.getY()<<","<<pitch<<","<<roll<<endl;
+    os<<counter<<","<<dist_right<<","<<dist_backward<<","<<dist_left<<","<<dist_forward<<","<<accel.x<<","<<
+    accel.y<<","<<pitch<<","<<roll<<endl;
 }
 

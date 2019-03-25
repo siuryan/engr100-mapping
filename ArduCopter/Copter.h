@@ -22,6 +22,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <cmath>
+#include <fstream>
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -965,7 +966,7 @@ private:
     void autonomous_run();
     bool autonomous_controller(float &target_climb_rate, float &target_roll, float &target_pitch, float &target_yaw_rate);
 	void center_drone(float &target_roll, float &target_pitch, float &dist_forward, float &dist_right, float &dist_backward, float &dist_left);
-    void Copter::logging(ofstream &os,int counter,float &dist_forward, 
+    void logging(std::ofstream &os,int counter,float &dist_forward, 
     float &dist_right, float &dist_backward, float &dist_left, Vector3f &accel,float &pitch,float &roll) const;
 
     void ekf_check();
