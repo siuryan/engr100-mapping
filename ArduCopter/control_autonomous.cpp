@@ -223,16 +223,16 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     if(c%50==0){
         //c%50 can be 100. lets see what data we get.//need to understand what one second is. 
         Vector3f accel = ins.get_accel();
-	float pitch = 100.0f * g.pid_pitch.get_pid();
-	float roll = 100.0f * g.pid_roll.get_pid();
+	float p = 100.0f * g.pid_pitch.get_pid();
+	float r = 100.0f * g.pid_roll.get_pid();
         logging(os,c,dist_forward,dist_right,dist_backward,dist_left,accel,
-        pitch, roll);
+        p, r);
 
     }
     
     static int counter = 0;
     if(counter++ > 400){
-	    //gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for GameOfDrones");
+	    gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for GameOfDrones");
 	    //gcs_send_text(MAV_SEVERITY_INFO, s_dist_forward);	
 
     	
@@ -247,13 +247,18 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
 	    // Print the four lidars readings to see if they are correct (might be out of range and cause problems)
 	    string lidarReadings;
+		//lidarReadings += "\n";
 	    lidarReadings += "Left: "; lidarReadings += dist_left; 
-	    lidarReadings += " Right: "; lidarReadings += dist_right;
+	    lidarReadings += " Right: 5"; lidarReadings += dist_right;
 	    lidarReadings += " Front: "; lidarReadings += dist_forward; 
 	    lidarReadings += " Back: "; lidarReadings += dist_backward; 
 	    const char *ptr_lidarReadings = lidarReadings.c_str();
 
 	    gcs_send_text(MAV_SEVERITY_INFO, ptr_lidarReadings);
+gcs_send_text(MAV_SEVERITY_INFO, "distThreshold");
+	gcs_send_text(MAV_SEVERITY_INFO, ptr_distThreshold);
+gcs_send_text(MAV_SEVERITY_INFO, "centerThreshold");
+	gcs_send_text(MAV_SEVERITY_INFO, ptr_centerThreshold);
 
 	    counter = 0;
     }
@@ -277,7 +282,10 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         backDirection = Direction::back;
 
         //Debugging print statements
-        gcs_send_text(MAV_SEVERITY_INFO, "Moving Forward");
+	if(counter >= 400) {
+		gcs_send_text(MAV_SEVERITY_INFO, "Moving Forward");
+	}
+        
     }
     //Move the drone to the right
     else if(backDirection != Direction::right && dist_right > distThreshold){
@@ -289,7 +297,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         backDirection = Direction::left;
 
         //Debugging print statements
-        gcs_send_text(MAV_SEVERITY_INFO, "Moving Right");
+        if(counter >= 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Right");
     }
     //Move the drone backward
     else if(backDirection != Direction::back && dist_backward > distThreshold){
@@ -300,7 +308,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         backDirection = Direction::front;
 
         //Debugging print statements
-        gcs_send_text(MAV_SEVERITY_INFO, "Moving Backward");
+        if(counter >= 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Backward");
     }
     //Move the drone to the left
     else if(backDirection != Direction::left && dist_left > distThreshold){
@@ -311,7 +319,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         backDirection = Direction::right;
 
         //Debugging print statements
-        gcs_send_text(MAV_SEVERITY_INFO, "Moving Left");
+        if(counter >= 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Left");
     }
 
     // need a landing command, uncomment later...
@@ -335,7 +343,7 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
         target_roll = 100.0f * g.pid_roll.get_pid();
 
         //Debugging print statements
-		if(count > 400) {
+		if(count >= 400) {
         	gcs_send_text(MAV_SEVERITY_INFO, "Centering Between Left and Right Walls");
 		}
     }	
@@ -347,7 +355,7 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
         target_pitch = 100.0f * g.pid_pitch.get_pid();
 
         //Debugging print statements
-		if(count > 400) {
+		if(count >= 400) {
 			gcs_send_text(MAV_SEVERITY_INFO, "Centering Between Front and Back Walls");
 		}
     }
