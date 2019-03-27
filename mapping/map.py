@@ -1,16 +1,22 @@
 from Plotter import Plotter
 from LogReader import LogReader
+from Localizer import Localizer
 
 def main():
     plotter = Plotter()
     log_reader = LogReader()
 
     log_reader.read_logs('sample-log.txt', True)
-    print (log_reader.get_logs())
+    local = Localizer(log_reader.get_logs())
 
-    # TODO: replace this with points from log
-    for i in range(10):
-        plotter.add_point(i, i)
+    x = local.get_positions_x()
+    y = local.get_positions_y()
+    print (x)
+    print (y)
+    print (local.get_walls())
+
+    for i in range(len(x)):
+        plotter.add_point(x[i], y[i])
 
     plotter.plot()
 

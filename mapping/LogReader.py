@@ -12,16 +12,16 @@ class LogReader:
                 next(reader, None)
 
             for row in reader:
-                self.logs[row[0]] = {
-                    'time': row[0],
-                    'l1': row[1],
-                    'l2': row[2],
-                    'l3': row[3],
-                    'l4': row[4],
-                    'a_x': row[5],
-                    'a_y': row[6],
-                    'roll': row[7],
-                    'pitch': row[8]
+                self.logs[int(row[0])] = {
+                    'time': int(row[0]),
+                    'l1': float(row[1]),
+                    'l2': float(row[2]),
+                    'l3': float(row[3]),
+                    'l4': float(row[4]),
+                    'a_x': float(row[5]),
+                    'a_y': float(row[6]),
+                    'roll': float(row[7]),
+                    'pitch': float(row[8])
                 }
 
     def get_logs(self):
