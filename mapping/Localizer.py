@@ -1,7 +1,11 @@
 class Localizer:
 
-    def __init__(self, logs):
+    def __init__(self, logs, threshold):
+        self.WALL_THRESHOLD = threshold
+
+        # List of tuples
         self.walls = []
+
         self.position_x = []
         self.position_y = []
 
@@ -42,7 +46,19 @@ class Localizer:
             self.position_y.append(d_y)
 
     def _populate_walls(self, logs):
-        return
+        for i in range(len(logs)):
+            # up
+            if logs[i]['l1'] < self.WALL_THRESHOLD:
+                self.walls.append((self.position_x[i], self.position_y[i] + logs[i]['l1']))
+            # right
+            if logs[i]['l2'] < self.WALL_THRESHOLD:
+                self.walls.append((self.position_x[i] + logs[i]['l2'], self.position_y[i]))
+            # down
+            if logs[i]['l3'] < self.WALL_THRESHOLD:
+                self.walls.append((self.position_x[i], self.position_y[i] - logs[i]['l3']))
+            # left
+            if logs[i]['l4'] < self.WALL_THRESHOLD:
+                self.walls.append((self.position_x[i] - logs[i]['l4'], self.position_y[i]))
 
     def get_walls(self):
         return self.walls
