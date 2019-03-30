@@ -131,6 +131,16 @@
 #include <SITL/SITL.h>
 #endif
 
+//Static variable to keep track of backward direction
+//Representations: 1 = front, 2 = back, 3 = right, 4 = left
+static int backDirection = -1;
+
+//Threshhold for moving forward, backward, left and right
+static const double distThreshhold = 0.5;
+
+//Threshold for telling the drone when it should not center
+//ex when one wall is too far away
+static const double centerThreshhold = 2;
 
 class Copter : public AP_HAL::HAL::Callbacks {
 public:
@@ -631,7 +641,7 @@ private:
 
     // set when we are upgrading parameters from 3.4
     bool upgrading_frame_params;
-    
+
     static const AP_Scheduler::Task scheduler_tasks[];
     static const AP_Param::Info var_info[];
     static const struct LogStructure log_structure[];
