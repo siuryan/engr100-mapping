@@ -1,11 +1,9 @@
 #include <iostream>
 #include "Copter.h"
 #include <string>
+#include <fstream>
 
-
-    
 using namespace std;
-
 /*
  * Init and run calls for autonomous flight mode (largely based off of the AltHold flight mode)
  */
@@ -219,9 +217,19 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
 
     const char *s_dist_forward = to_string(dist_forward).c_str();
-	
+    static ofstream os;
     //send logging messages to Mission Planner onve every second
-    static int counter = 0; 
+    static int counter = 0;
+    static int timestate = 0;
+    Vector3f accel = ins.get_accel();
+    if(counter%50==0){
+        Vector3f accel = ins.get_accel();
+	Vector3f gyro = ins.get_gyro();
+
+	logging(os,timestate,dist_forward,dist_right,dist_backward,dist_left,accel,gyro,100.0f * 		g.pid_pitch.get_pid(),100.0f * g.pid_roll.get_pid());
+
+	timestate+=counter;
+    }
     if(counter++ > 400){
 	    gcs_send_text(MAV_SEVERITY_INFO, "Autnomous flight mode for GameOfDrones");
 	    gcs_send_text(MAV_SEVERITY_INFO, s_dist_forward);	
@@ -270,6 +278,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         //backDirection is now to the right
         backDirection = Direction::right;
     }
+    
    
     return true;
 }
@@ -294,5 +303,9 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
     }
 
     return;
+}
+void Copter::logging(ifstream &os,int counter,float &dist_forward, 
+    float &dist_right, float &dist_backward, float &dist_left,accel,gyroread){
+    os<<counter<<dist_right<<dist_backward<<dist_left<<dist_forward<<accel<<gyro<<endl;
 }
 
