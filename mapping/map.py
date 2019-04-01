@@ -17,8 +17,8 @@ def main():
     print (walls)
 
     for i in range(len(x)):
-        plotter.add_point(x[i], y[i])
-        # plotter.add_point(walls[i][0], walls[i][1])
+        plotter.add_point(x[i], y[i], 0)
+        plotter.add_point(walls[i][0], walls[i][1], 1)
 
     plotter.plot()
 
