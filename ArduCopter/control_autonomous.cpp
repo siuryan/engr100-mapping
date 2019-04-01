@@ -215,59 +215,58 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     // set desired yaw rate in centi-degrees per second (set to zero to hold constant heading)
     target_yaw_rate = 0.0f;
 
-    //Project Implementation Below//
-    //                            //
-    //                            //
-
-    //Centers the drone between adjacent walls at every iteration
-    center_drone(target_roll, target_pitch, dist_forward, 
-    dist_right, dist_backward, dist_left);
-
-    //Representations: 1 = front, 2 = back, 3 = right, 4 = left
-
-    //Assuming back direction is not the front and the sensors detect 
-    //a reasonable distance then move the drone forward
-    if(backDirection != 1 && dist_forward > distThreshhold){
-        g.pid_pitch.set_input_filter_all(distThreshhold - dist_forward);
-        target_pitch = 100.0f * g.pid_pitch.get_pid();
-
-        //backDirection is now backwards
-        backDirection = 2;
-    }
-    //Move the drone to the right
-    else if(backDirection != 3 && dist_right > distThreshhold){
-        //Positive roll should be to the right
-        g.pid_roll.set_input_filter_all(dist_right - distThreshhold);
-        target_roll = 100.0f * g.pid_roll.get_pid();
-
-        //backDirection is now to the left
-        backDirection = 4;
-    }
-    //Move the drone backward
-    else if(backDirection != 2 && dist_backward > distThreshhold){
-        g.pid_pitch.set_input_filter_all(dist_backward - distThreshhold);
-        target_pitch = 100.0f * g.pid_pitch.get_pid();
-
-        //backDirection is now to the front
-        backDirection = 1;
-    }
-    //Move the drone to the left
-    else if(backDirection != 4 && dist_left > distThreshhold){
-        g.pid_roll.set_input_filter_all(distThreshhold - dist_left);
-        target_roll = 100.0f * g.pid_roll.get_pid();
-
-        //backDirection is now to the right
-        backDirection = 3;
-    }
 
     const char *s_dist_forward = to_string(dist_forward).c_str();
 	
     //send logging messages to Mission Planner onve every second
     static int counter = 0; 
     if(counter++ > 400){
-	gcs_send_text(MAV_SEVERITY_INFO, "Autnomous flight mode for GameOfDrones");
-	gcs_send_text(MAV_SEVERITY_INFO, s_dist_forward);	
-	counter = 0;
+	    gcs_send_text(MAV_SEVERITY_INFO, "Autnomous flight mode for GameOfDrones");
+	    gcs_send_text(MAV_SEVERITY_INFO, s_dist_forward);	
+	    counter = 0;
+    }
+
+    //Project Implementation Below//
+    //                            //
+    //                            //
+    
+    //Centers the drone between adjacent walls at every iteration
+    center_drone(target_roll, target_pitch, dist_forward, 
+    dist_right, dist_backward, dist_left);
+
+    //Assuming back direction is not the front and the sensors detect 
+    //a reasonable distance then move the drone forward
+    if(backDirection != front && dist_forward > distThreshhold){
+        g.pid_pitch.set_input_filter_all(distThreshhold - dist_forward);
+        target_pitch = 100.0f * g.pid_pitch.get_pid();
+
+        //backDirection is now backwards
+        backDirection = back;
+    }
+    //Move the drone to the right
+    else if(backDirection != right && dist_right > distThreshhold){
+        //Positive roll should be to the right
+        g.pid_roll.set_input_filter_all(dist_right - distThreshhold);
+        target_roll = 100.0f * g.pid_roll.get_pid();
+
+        //backDirection is now to the left
+        backDirection = left;
+    }
+    //Move the drone backward
+    else if(backDirection != back && dist_backward > distThreshhold){
+        g.pid_pitch.set_input_filter_all(dist_backward - distThreshhold);
+        target_pitch = 100.0f * g.pid_pitch.get_pid();
+
+        //backDirection is now to the front
+        backDirection = front;
+    }
+    //Move the drone to the left
+    else if(backDirection != left && dist_left > distThreshhold){
+        g.pid_roll.set_input_filter_all(distThreshhold - dist_left);
+        target_roll = 100.0f * g.pid_roll.get_pid();
+
+        //backDirection is now to the right
+        backDirection = right;
     }
    
     return true;
@@ -277,18 +276,17 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 //the drone sees as backwards
 void center_drone(float &target_roll, float &target_pitch, float &dist_forward, 
     float &dist_right, float &dist_backward, float &dist_left){
-    //Representations: 1 = front, 2 = back, 3 = right, 4 = left
 
     //If the back direction is the front or back and the walls are not too far away 
     //then center between left and right walls
-    if((backDirection == 1 || backDirection == 2) && 
+    if((backDirection == front || backDirection == back) && 
         (dist_right < centerThreshhold && dist_left < centerThreshhold)){
         g.pid_roll.set_input_filter_all(dist_right - dist_left);
         target_roll = 100.0f * g.pid_roll.get_pid();
     }
     //If the back direction is left or front and the walls are not too far away
     //then center between front and back walls
-    else if((backDirection == 3 || backDirection == 4) && 
+    else if((backDirection == right || backDirection == left) && 
         (dist_forward < centerThreshhold && dist_backward < centerThreshhold)){
         g.pid_roll.set_input_filter_all(dist_forward - dist_backward);
         target_roll = 100.0f * g.pid_roll.get_pid();

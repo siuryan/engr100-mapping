@@ -131,9 +131,12 @@
 #include <SITL/SITL.h>
 #endif
 
+
+//Enum to keep track of directions
+enum directions {front, back, left, right};
+
 //Static variable to keep track of backward direction
-//Representations: 1 = front, 2 = back, 3 = right, 4 = left
-static int backDirection = -1;
+static int backDirection = back;
 
 //Threshhold for moving forward, backward, left and right
 static const double distThreshhold = 0.5;
