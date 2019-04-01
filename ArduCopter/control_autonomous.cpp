@@ -2,8 +2,7 @@
 #include "Copter.h"
 #include <string>
 
-void center_drone(float &target_roll, float &target_pitch, float &dist_forward, 
-    float &dist_right, float &dist_backward, float &dist_left);
+
     
 using namespace std;
 
@@ -239,57 +238,56 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     //Assuming back direction is not the front and the sensors detect 
     //a reasonable distance then move the drone forward
-    if(backDirection != directions.front && dist_forward > distThreshhold){
+    if(backDirection != Direction::front && dist_forward > distThreshhold){
         g.pid_pitch.set_input_filter_all(distThreshhold - dist_forward);
         target_pitch = 100.0f * g.pid_pitch.get_pid();
 
         //backDirection is now backwards
-        backDirection = directions.back;
+        backDirection = Direction::back;
     }
     //Move the drone to the right
-    else if(backDirection != directions.right && dist_right > distThreshhold){
+    else if(backDirection != Direction::right && dist_right > distThreshhold){
         //Positive roll should be to the right
         g.pid_roll.set_input_filter_all(dist_right - distThreshhold);
         target_roll = 100.0f * g.pid_roll.get_pid();
 
         //backDirection is now to the left
-        backDirection = directions.left;
+        backDirection = Direction::left;
     }
     //Move the drone backward
-    else if(backDirection != directions.back && dist_backward > distThreshhold){
+    else if(backDirection != Direction::back && dist_backward > distThreshhold){
         g.pid_pitch.set_input_filter_all(dist_backward - distThreshhold);
         target_pitch = 100.0f * g.pid_pitch.get_pid();
 
         //backDirection is now to the front
-        backDirection = directions.front;
+        backDirection = Direction::front;
     }
     //Move the drone to the left
-    else if(backDirection != directions.left && dist_left > distThreshhold){
+    else if(backDirection != Direction::left && dist_left > distThreshhold){
         g.pid_roll.set_input_filter_all(distThreshhold - dist_left);
         target_roll = 100.0f * g.pid_roll.get_pid();
 
         //backDirection is now to the right
-        backDirection = directions.right;
+        backDirection = Direction::right;
     }
    
     return true;
 }
-
 //EFFECTS: Centers the drone between its adjacent walls depending on what
 //the drone sees as backwards
-void center_drone(float &target_roll, float &target_pitch, float &dist_forward, 
+void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_forward, 
     float &dist_right, float &dist_backward, float &dist_left){
 
     //If the back direction is the front or back and the walls are not too far away 
     //then center between left and right walls
-    if((backDirection == directions.front || backDirection == directions.back) && 
+    if((backDirection == Direction::front || backDirection == Direction::back) && 
         (dist_right < centerThreshhold && dist_left < centerThreshhold)){
         g.pid_roll.set_input_filter_all(dist_right - dist_left);
         target_roll = 100.0f * g.pid_roll.get_pid();
     }
     //If the back direction is left or right and the walls are not too far away
     //then center between front and back walls
-    else if((backDirection == directions.right || backDirection == directions.left) && 
+    else if((backDirection == Direction::right || backDirection == Direction::left) && 
         (dist_forward < centerThreshhold && dist_backward < centerThreshhold)){
         g.pid_pitch.set_input_filter_all(dist_forward - dist_backward);
         target_pitch = 100.0f * g.pid_pitch.get_pid();
@@ -297,3 +295,4 @@ void center_drone(float &target_roll, float &target_pitch, float &dist_forward,
 
     return;
 }
+

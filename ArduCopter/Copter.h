@@ -131,12 +131,13 @@
 #include <SITL/SITL.h>
 #endif
 
-
 //Enum to keep track of directions
-enum directions {front, back, left, right};
+	enum class Direction {front, back, left, right};
 
-//Static variable to keep track of backward direction
-static int backDirection = directions.back;
+	
+
+
+
 
 //Threshhold for moving forward, backward, left and right
 static const double distThreshhold = 0.5;
@@ -146,6 +147,10 @@ static const double distThreshhold = 0.5;
 static const double centerThreshhold = 2;
 
 class Copter : public AP_HAL::HAL::Callbacks {
+private:
+	
+	//Static variable to keep track of backward direction
+	Direction backDirection = Direction::right;
 public:
     friend class GCS_MAVLINK_Copter;
     friend class AP_Rally_Copter;
@@ -963,6 +968,7 @@ private:
     bool autonomous_init(bool ignore_checks);
     void autonomous_run();
     bool autonomous_controller(float &target_climb_rate, float &target_roll, float &target_pitch, float &target_yaw_rate);
+	void center_drone(float &target_roll, float &target_pitch, float &dist_forward, float &dist_right, float &dist_backward, float &dist_left);
 
     void ekf_check();
     bool ekf_over_threshold();
