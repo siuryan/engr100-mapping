@@ -136,7 +136,7 @@
 enum directions {front, back, left, right};
 
 //Static variable to keep track of backward direction
-static int backDirection = back;
+static int backDirection = directions.back;
 
 //Threshhold for moving forward, backward, left and right
 static const double distThreshhold = 0.5;
