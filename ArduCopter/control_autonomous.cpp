@@ -284,12 +284,12 @@ void center_drone(float &target_roll, float &target_pitch, float &dist_forward,
         g.pid_roll.set_input_filter_all(dist_right - dist_left);
         target_roll = 100.0f * g.pid_roll.get_pid();
     }
-    //If the back direction is left or front and the walls are not too far away
+    //If the back direction is left or right and the walls are not too far away
     //then center between front and back walls
     else if((backDirection == right || backDirection == left) && 
         (dist_forward < centerThreshhold && dist_backward < centerThreshhold)){
-        g.pid_roll.set_input_filter_all(dist_forward - dist_backward);
-        target_roll = 100.0f * g.pid_roll.get_pid();
+        g.pid_pitch.set_input_filter_all(dist_forward - dist_backward);
+        target_pitch = 100.0f * g.pid_pitch.get_pid();
     }
 
     return;
