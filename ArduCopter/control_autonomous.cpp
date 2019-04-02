@@ -231,8 +231,8 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 	timestate+=counter;
     }
     if(counter++ > 400){
-	    gcs_send_text(MAV_SEVERITY_INFO, "Autnomous flight mode for GameOfDrones");
-	    gcs_send_text(MAV_SEVERITY_INFO, s_dist_forward);	
+	    //gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for GameOfDrones");
+	    //gcs_send_text(MAV_SEVERITY_INFO, s_dist_forward);	
 	    counter = 0;
     }
 
@@ -240,6 +240,11 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     //                            //
     //                            //
 
+    //Debugging print statements - Make sure the thresholds are actually set on Mission Planner
+    //Check to make sure the variable is accessible
+    gcs_send_text(MAV_SEVERITY_INFO, to_string(distThreshold).c_str());
+    gcs_send_text(MAV_SEVERITY_INFO, to_string(centerThreshhold).c_str());
+    
     //Centers the drone between adjacent walls at every iteration
     center_drone(target_roll, target_pitch, dist_forward, 
     dist_right, dist_backward, dist_left);
@@ -249,9 +254,12 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     if(backDirection != Direction::front && dist_forward > distThreshhold){
         g.pid_pitch.set_input_filter_all(distThreshhold - dist_forward);
         target_pitch = 100.0f * g.pid_pitch.get_pid();
-
+        
         //backDirection is now backwards
         backDirection = Direction::back;
+
+        //Debugging print statements
+        gcs_send_text(MAV_SEVERITY_INFO, "Moving Forward");
     }
     //Move the drone to the right
     else if(backDirection != Direction::right && dist_right > distThreshhold){
@@ -261,6 +269,9 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
         //backDirection is now to the left
         backDirection = Direction::left;
+
+        //Debugging print statements
+        gcs_send_text(MAV_SEVERITY_INFO, "Moving Right");
     }
     //Move the drone backward
     else if(backDirection != Direction::back && dist_backward > distThreshhold){
@@ -269,6 +280,9 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
         //backDirection is now to the front
         backDirection = Direction::front;
+
+        //Debugging print statements
+        gcs_send_text(MAV_SEVERITY_INFO, "Moving Backward");
     }
     //Move the drone to the left
     else if(backDirection != Direction::left && dist_left > distThreshhold){
@@ -277,6 +291,9 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
         //backDirection is now to the right
         backDirection = Direction::right;
+
+        //Debugging print statements
+        gcs_send_text(MAV_SEVERITY_INFO, "Moving Left");
     }
     
    
@@ -293,6 +310,9 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
         (dist_right < centerThreshhold && dist_left < centerThreshhold)){
         g.pid_roll.set_input_filter_all(dist_right - dist_left);
         target_roll = 100.0f * g.pid_roll.get_pid();
+
+        //Debugging print statements
+        gcs_send_text(MAV_SEVERITY_INFO, "Centering Between Left and Right Walls");
     }
     //If the back direction is left or right and the walls are not too far away
     //then center between front and back walls
@@ -300,6 +320,9 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
         (dist_forward < centerThreshhold && dist_backward < centerThreshhold)){
         g.pid_pitch.set_input_filter_all(dist_forward - dist_backward);
         target_pitch = 100.0f * g.pid_pitch.get_pid();
+
+        //Debugging print statements
+        gcs_send_text(MAV_SEVERITY_INFO, "Centering Between Front and Back Walls");
     }
 
     return;
