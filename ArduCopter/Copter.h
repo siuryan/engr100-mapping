@@ -142,11 +142,11 @@ private:
 	Direction backDirection = Direction::right;
 
 	//Threshhold for moving forward, backward, left and right
-	const double distThreshhold = g.e100_param1;
+	const double distThreshold = g.e100_param1;
 
 	//Threshold for telling the drone when it should not center
 	//ex when one wall is too far away
-	const double centerThreshhold = g.e100_param2;
+	const double centerThreshold = g.e100_param2;
 public:
     friend class GCS_MAVLINK_Copter;
     friend class AP_Rally_Copter;
