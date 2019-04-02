@@ -218,19 +218,16 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     //const char *s_dist_forward = to_string(dist_forward).c_str();
 
-    /*static ofstream os;
-    //send logging messages to Mission Planner onve every second
-    static int counter = 0;
-    static int timestate = 0;
+    static ofstream os("mapping_data.txt");
+    static int c = 0; 
     Vector3f accel = ins.get_accel();
-    if(counter%50==0){
+    if(c%50==0){
+        //c%50 can be 100. lets see what data we get.//need to understand what one second is. 
         Vector3f accel = ins.get_accel();
-	Vector3f gyro = ins.get_gyro();
+        logging(os,c,dist_forward,dist_right,dist_backward,dist_left,accel,
+        100.0f * g.pid_pitch.get_pid(),100.0f * g.pid_roll.get_pid());
 
-	logging(os,timestate,dist_forward,dist_right,dist_backward,dist_left,accel,gyro,100.0f * 		g.pid_pitch.get_pid(),100.0f * g.pid_roll.get_pid());
-
-	timestate+=counter;
-    }*/
+    }
     
     static int counter = 0;
     if(counter++ > 400){
@@ -352,8 +349,10 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
 
     return;
 }
-/*void Copter::logging(ifstream &os,int counter,float &dist_forward, 
-    float &dist_right, float &dist_backward, float &dist_left,accel,gyroread){
-    os<<counter<<dist_right<<dist_backward<<dist_left<<dist_forward<<accel<<gyro<<endl;
-}*/
+//LOGGING:
+void Copter::logging(ifstream &os,int counter,float &dist_forward, 
+    float &dist_right, float &dist_backward, float &dist_left, Vector3f &accel,float &pitch,float &roll) const{
+    os<<counter<<","<<dist_right<<","<<dist_backward<<","<<dist_left<<","<<dist_forward<<","<<accel.getX()<<","<<
+    accel.getY()<<","<<pitch<<","<<roll<<endl;
+}
 
