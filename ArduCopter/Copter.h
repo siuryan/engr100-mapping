@@ -965,7 +965,7 @@ private:
     bool autonomous_init(bool ignore_checks);
     void autonomous_run();
     bool autonomous_controller(float &target_climb_rate, float &target_roll, float &target_pitch, float &target_yaw_rate);
-	void center_drone(float &target_roll, float &target_pitch, float &dist_forward, float &dist_right, float &dist_backward, float &dist_left);
+	void center_drone(float &target_roll, float &target_pitch, float &dist_forward, float &dist_right, float &dist_backward, float &dist_left, int count);
     void logging(std::ofstream &os,int counter,float &dist_forward, 
     float &dist_right, float &dist_backward, float &dist_left, Vector3f &accel,float &pitch,float &roll) const;
 

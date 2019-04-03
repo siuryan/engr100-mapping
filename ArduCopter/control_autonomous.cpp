@@ -265,7 +265,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     
     //Centers the drone between adjacent walls at every iteration
     center_drone(target_roll, target_pitch, dist_forward, 
-    dist_right, dist_backward, dist_left);
+    dist_right, dist_backward, dist_left, counter);
 
     //Assuming back direction is not the front and the sensors detect 
     //a reasonable distance then move the drone forward
@@ -325,7 +325,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 //EFFECTS: Centers the drone between its adjacent walls depending on what
 //the drone sees as backwards
 void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_forward, 
-    float &dist_right, float &dist_backward, float &dist_left){
+    float &dist_right, float &dist_backward, float &dist_left, int count){
 
     //If the back direction is the front or back and the walls are not too far away 
     //then center between left and right walls
@@ -335,8 +335,10 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
         target_roll = 100.0f * g.pid_roll.get_pid();
 
         //Debugging print statements
-        gcs_send_text(MAV_SEVERITY_INFO, "Centering Between Left and Right Walls");
-    }
+		if(count > 400) {
+        	gcs_send_text(MAV_SEVERITY_INFO, "Centering Between Left and Right Walls");
+		}
+    }	
     //If the back direction is left or right and the walls are not too far away
     //then center between front and back walls
     else if((backDirection == Direction::right || backDirection == Direction::left) && 
@@ -345,8 +347,11 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
         target_pitch = 100.0f * g.pid_pitch.get_pid();
 
         //Debugging print statements
-        gcs_send_text(MAV_SEVERITY_INFO, "Centering Between Front and Back Walls");
+		if(count > 400) {
+			gcs_send_text(MAV_SEVERITY_INFO, "Centering Between Front and Back Walls");
+		}
     }
+	++count;
 
     return;
 }
