@@ -234,7 +234,6 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     if(counter++ > 400){
 	    gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for GameOfDrones");
 	    //gcs_send_text(MAV_SEVERITY_INFO, s_dist_forward);	
-
     	
 
 	    //Debugging print statements - Make sure the thresholds are actually set on Mission Planner
@@ -242,26 +241,54 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 	    const char *ptr_distThreshold = to_string(distThreshold).c_str();
 	    const char *ptr_centerThreshold = to_string(centerThreshold).c_str();
 
-	    gcs_send_text(MAV_SEVERITY_INFO, ptr_distThreshold);
+	    gcs_send_text(MAV_SEVERITY_INFO, "distThreshold");
+		gcs_send_text(MAV_SEVERITY_INFO, ptr_distThreshold);
+		gcs_send_text(MAV_SEVERITY_INFO, "centerThreshold");
 	    gcs_send_text(MAV_SEVERITY_INFO, ptr_centerThreshold);
 
 	    // Print the four lidars readings to see if they are correct (might be out of range and cause problems)
-	    string lidarReadings;
-		//lidarReadings += "\n";
+
+	    /*string lidarReadings;
 	    lidarReadings += "Left: "; lidarReadings += dist_left; 
 	    lidarReadings += " Right: 5"; lidarReadings += dist_right;
 	    lidarReadings += " Front: "; lidarReadings += dist_forward; 
 	    lidarReadings += " Back: "; lidarReadings += dist_backward; 
 	    const char *ptr_lidarReadings = lidarReadings.c_str();
 
-	    gcs_send_text(MAV_SEVERITY_INFO, ptr_lidarReadings);
-gcs_send_text(MAV_SEVERITY_INFO, "distThreshold");
-	gcs_send_text(MAV_SEVERITY_INFO, ptr_distThreshold);
-gcs_send_text(MAV_SEVERITY_INFO, "centerThreshold");
-	gcs_send_text(MAV_SEVERITY_INFO, ptr_centerThreshold);
+	    gcs_send_text(MAV_SEVERITY_INFO, ptr_lidarReadings);*/
+
+	    // print each message in a line
+	    const char *ptr_left = to_string(dist_left).c_str();
+	    const char *ptr_right = to_string(dist_right).c_str();
+	    const char *ptr_front = to_string(dist_forward).c_str();
+	    const char *ptr_back = to_string(dist_backward).c_str();
+	    gcs_send_text(MAV_SEVERITY_INFO, "Left");
+	    gcs_send_text(MAV_SEVERITY_INFO, ptr_left);
+	    gcs_send_text(MAV_SEVERITY_INFO, "Right");
+	    gcs_send_text(MAV_SEVERITY_INFO, ptr_right);
+	    gcs_send_text(MAV_SEVERITY_INFO, "Front");
+	    gcs_send_text(MAV_SEVERITY_INFO, ptr_front);
+	    gcs_send_text(MAV_SEVERITY_INFO, "Back");
+	    gcs_send_text(MAV_SEVERITY_INFO, ptr_back);
+
 
 	    counter = 0;
     }
+
+    // The C format version to print data for debugiing
+    /*if(counter++ > 400) {
+    	gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for GameOfDrones, C format printing");
+
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "distThreshold is %.2f \n", distThreshold);
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "centerThreshold is %.2f \n", centerThreshold);
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Left: %.2f \n", dist_left);
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Right: %.2f \n", dist_right);
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Front: %.2f \n", dist_forward);
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Back: %.2f \n", dist_backward);
+
+
+
+    }*/
 
     //Project Implementation Below//
     //                            //
@@ -282,7 +309,7 @@ gcs_send_text(MAV_SEVERITY_INFO, "centerThreshold");
         backDirection = Direction::back;
 
         //Debugging print statements
-	if(counter >= 400) {
+	if(counter > 400) {
 		gcs_send_text(MAV_SEVERITY_INFO, "Moving Forward");
 	}
         
@@ -297,7 +324,7 @@ gcs_send_text(MAV_SEVERITY_INFO, "centerThreshold");
         backDirection = Direction::left;
 
         //Debugging print statements
-        if(counter >= 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Right");
+        if(counter > 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Right");
     }
     //Move the drone backward
     else if(backDirection != Direction::back && dist_backward > distThreshold){
@@ -308,7 +335,7 @@ gcs_send_text(MAV_SEVERITY_INFO, "centerThreshold");
         backDirection = Direction::front;
 
         //Debugging print statements
-        if(counter >= 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Backward");
+        if(counter > 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Backward");
     }
     //Move the drone to the left
     else if(backDirection != Direction::left && dist_left > distThreshold){
@@ -319,7 +346,7 @@ gcs_send_text(MAV_SEVERITY_INFO, "centerThreshold");
         backDirection = Direction::right;
 
         //Debugging print statements
-        if(counter >= 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Left");
+        if(counter > 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Left");
     }
 
     // need a landing command, uncomment later...
@@ -343,7 +370,7 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
         target_roll = 100.0f * g.pid_roll.get_pid();
 
         //Debugging print statements
-		if(count >= 400) {
+		if(count > 400) {
         	gcs_send_text(MAV_SEVERITY_INFO, "Centering Between Left and Right Walls");
 		}
     }	
@@ -355,7 +382,7 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
         target_pitch = 100.0f * g.pid_pitch.get_pid();
 
         //Debugging print statements
-		if(count >= 400) {
+		if(count > 400) {
 			gcs_send_text(MAV_SEVERITY_INFO, "Centering Between Front and Back Walls");
 		}
     }
