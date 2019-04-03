@@ -350,7 +350,7 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
     return;
 }
 //LOGGING:
-void Copter::logging(ifstream &os,int counter,float &dist_forward, 
+void Copter::logging(ofstream &os,int counter,float &dist_forward, 
     float &dist_right, float &dist_backward, float &dist_left, Vector3f &accel,float &pitch,float &roll) const{
     os<<counter<<","<<dist_right<<","<<dist_backward<<","<<dist_left<<","<<dist_forward<<","<<accel.getX()<<","<<
     accel.getY()<<","<<pitch<<","<<roll<<endl;
