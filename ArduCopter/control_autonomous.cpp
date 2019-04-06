@@ -3,6 +3,8 @@
 #include <string>
 #include <fstream>
 #include <cstring>
+#include <cstdlib> 
+#include <ctime> 
 
 using namespace std;
 /*
@@ -218,7 +220,13 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     //const char *s_dist_forward = to_string(dist_forward).c_str();
 
-    static ofstream os("mapping_data.txt");
+    srand((unsigned)time(0)); 
+    int random_integer = rand();
+    string filename = "mapping_data.txt";
+    string fn = to_string(random_integer) += filename;
+
+
+    static ofstream os(fn);
     static int c = 0; 
     if(c%50==0){
         //c%50 can be 100. lets see what data we get.//need to understand what one second is. 
