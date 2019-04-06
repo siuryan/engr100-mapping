@@ -220,13 +220,11 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     //const char *s_dist_forward = to_string(dist_forward).c_str();
 
-    srand((unsigned)time(0)); 
-    int random_integer = rand();
-    string filename = "mapping_data.txt";
-    string fn = to_string(random_integer) += filename;
+    static int num_time = time(0) % 10000;
+	static string filename = to_string(num_time) += "mapping_data.txt";
 
 
-    static ofstream os(fn);
+    static ofstream os(filename);
     static int c = 0; 
     if(c++%50==0){
         //c%50 can be 100. lets see what data we get.//need to understand what one second is. 
@@ -254,15 +252,6 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 	    gcs_send_text(MAV_SEVERITY_INFO, ptr_centerThreshold);
 
 	    // Print the four lidars readings to see if they are correct (might be out of range and cause problems)
-
-	    /*string lidarReadings;
-	    lidarReadings += "Left: "; lidarReadings += dist_left; 
-	    lidarReadings += " Right: 5"; lidarReadings += dist_right;
-	    lidarReadings += " Front: "; lidarReadings += dist_forward; 
-	    lidarReadings += " Back: "; lidarReadings += dist_backward; 
-	    const char *ptr_lidarReadings = lidarReadings.c_str();
-
-	    gcs_send_text(MAV_SEVERITY_INFO, ptr_lidarReadings);*/
 
 	    // print each message in a line
 	    const char *ptr_left = to_string(dist_left).c_str();
