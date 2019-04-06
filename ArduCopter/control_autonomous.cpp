@@ -228,14 +228,13 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     static ofstream os(fn);
     static int c = 0; 
-    if(c%50==0){
+    if(c++%50==0){
         //c%50 can be 100. lets see what data we get.//need to understand what one second is. 
         Vector3f accel = ins.get_accel();
 	float p = 100.0f * g.pid_pitch.get_pid();
 	float r = 100.0f * g.pid_roll.get_pid();
         logging(os,c,dist_forward,dist_right,dist_backward,dist_left,accel,
         p, r);
-
     }
     
     static int counter = 0;
