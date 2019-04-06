@@ -3,6 +3,8 @@
 #include <string>
 #include <fstream>
 #include <cstring>
+#include <cstdlib> 
+#include <ctime> 
 
 using namespace std;
 /*
@@ -218,22 +220,27 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     //const char *s_dist_forward = to_string(dist_forward).c_str();
 
-    static ofstream os("mapping_data.txt");
+    srand((unsigned)time(0)); 
+    int random_integer = rand();
+    string filename = "mapping_data.txt";
+    string fn = to_string(random_integer) += filename;
+
+
+    static ofstream os(fn);
     static int c = 0; 
-    Vector3f accel = ins.get_accel();
-    if(c%50==0){
+    if(c++%50==0){
         //c%50 can be 100. lets see what data we get.//need to understand what one second is. 
         Vector3f accel = ins.get_accel();
+	float p = 100.0f * g.pid_pitch.get_pid();
+	float r = 100.0f * g.pid_roll.get_pid();
         logging(os,c,dist_forward,dist_right,dist_backward,dist_left,accel,
-        100.0f * g.pid_pitch.get_pid(),100.0f * g.pid_roll.get_pid());
-
+        p, r);
     }
     
     static int counter = 0;
     if(counter++ > 400){
-	    //gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for GameOfDrones");
+	    gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for GameOfDrones");
 	    //gcs_send_text(MAV_SEVERITY_INFO, s_dist_forward);	
-
     	
 
 	    //Debugging print statements - Make sure the thresholds are actually set on Mission Planner
@@ -241,21 +248,54 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 	    const char *ptr_distThreshold = to_string(distThreshold).c_str();
 	    const char *ptr_centerThreshold = to_string(centerThreshold).c_str();
 
-	    gcs_send_text(MAV_SEVERITY_INFO, ptr_distThreshold);
+	    gcs_send_text(MAV_SEVERITY_INFO, "distThreshold");
+		gcs_send_text(MAV_SEVERITY_INFO, ptr_distThreshold);
+		gcs_send_text(MAV_SEVERITY_INFO, "centerThreshold");
 	    gcs_send_text(MAV_SEVERITY_INFO, ptr_centerThreshold);
 
 	    // Print the four lidars readings to see if they are correct (might be out of range and cause problems)
-	    string lidarReadings;
+
+	    /*string lidarReadings;
 	    lidarReadings += "Left: "; lidarReadings += dist_left; 
-	    lidarReadings += " Right: "; lidarReadings += dist_right;
+	    lidarReadings += " Right: 5"; lidarReadings += dist_right;
 	    lidarReadings += " Front: "; lidarReadings += dist_forward; 
 	    lidarReadings += " Back: "; lidarReadings += dist_backward; 
 	    const char *ptr_lidarReadings = lidarReadings.c_str();
 
-	    gcs_send_text(MAV_SEVERITY_INFO, ptr_lidarReadings);
+	    gcs_send_text(MAV_SEVERITY_INFO, ptr_lidarReadings);*/
+
+	    // print each message in a line
+	    const char *ptr_left = to_string(dist_left).c_str();
+	    const char *ptr_right = to_string(dist_right).c_str();
+	    const char *ptr_front = to_string(dist_forward).c_str();
+	    const char *ptr_back = to_string(dist_backward).c_str();
+	    gcs_send_text(MAV_SEVERITY_INFO, "Left");
+	    gcs_send_text(MAV_SEVERITY_INFO, ptr_left);
+	    gcs_send_text(MAV_SEVERITY_INFO, "Right");
+	    gcs_send_text(MAV_SEVERITY_INFO, ptr_right);
+	    gcs_send_text(MAV_SEVERITY_INFO, "Front");
+	    gcs_send_text(MAV_SEVERITY_INFO, ptr_front);
+	    gcs_send_text(MAV_SEVERITY_INFO, "Back");
+	    gcs_send_text(MAV_SEVERITY_INFO, ptr_back);
+
 
 	    counter = 0;
     }
+
+    // The C format version to print data for debugiing
+    /*if(counter++ > 400) {
+    	gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for GameOfDrones, C format printing");
+
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "distThreshold is %.2f \n", distThreshold);
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "centerThreshold is %.2f \n", centerThreshold);
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Left: %.2f \n", dist_left);
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Right: %.2f \n", dist_right);
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Front: %.2f \n", dist_forward);
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Back: %.2f \n", dist_backward);
+
+
+
+    }*/
 
     //Project Implementation Below//
     //                            //
@@ -264,7 +304,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     
     //Centers the drone between adjacent walls at every iteration
     center_drone(target_roll, target_pitch, dist_forward, 
-    dist_right, dist_backward, dist_left);
+    dist_right, dist_backward, dist_left, counter);
 
     //Assuming back direction is not the front and the sensors detect 
     //a reasonable distance then move the drone forward
@@ -276,7 +316,10 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         backDirection = Direction::back;
 
         //Debugging print statements
-        gcs_send_text(MAV_SEVERITY_INFO, "Moving Forward");
+	if(counter > 400) {
+		gcs_send_text(MAV_SEVERITY_INFO, "Moving Forward");
+	}
+        
     }
     //Move the drone to the right
     else if(backDirection != Direction::right && dist_right > distThreshold){
@@ -288,7 +331,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         backDirection = Direction::left;
 
         //Debugging print statements
-        gcs_send_text(MAV_SEVERITY_INFO, "Moving Right");
+        if(counter > 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Right");
     }
     //Move the drone backward
     else if(backDirection != Direction::back && dist_backward > distThreshold){
@@ -299,7 +342,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         backDirection = Direction::front;
 
         //Debugging print statements
-        gcs_send_text(MAV_SEVERITY_INFO, "Moving Backward");
+        if(counter > 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Backward");
     }
     //Move the drone to the left
     else if(backDirection != Direction::left && dist_left > distThreshold){
@@ -310,7 +353,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         backDirection = Direction::right;
 
         //Debugging print statements
-        gcs_send_text(MAV_SEVERITY_INFO, "Moving Left");
+        if(counter > 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Left");
     }
 
     // need a landing command, uncomment later...
@@ -324,7 +367,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 //EFFECTS: Centers the drone between its adjacent walls depending on what
 //the drone sees as backwards
 void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_forward, 
-    float &dist_right, float &dist_backward, float &dist_left){
+    float &dist_right, float &dist_backward, float &dist_left, int count){
 
     //If the back direction is the front or back and the walls are not too far away 
     //then center between left and right walls
@@ -334,8 +377,10 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
         target_roll = 100.0f * g.pid_roll.get_pid();
 
         //Debugging print statements
-        gcs_send_text(MAV_SEVERITY_INFO, "Centering Between Left and Right Walls");
-    }
+		if(count > 400) {
+        	gcs_send_text(MAV_SEVERITY_INFO, "Centering Between Left and Right Walls");
+		}
+    }	
     //If the back direction is left or right and the walls are not too far away
     //then center between front and back walls
     else if((backDirection == Direction::right || backDirection == Direction::left) && 
@@ -344,15 +389,18 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
         target_pitch = 100.0f * g.pid_pitch.get_pid();
 
         //Debugging print statements
-        gcs_send_text(MAV_SEVERITY_INFO, "Centering Between Front and Back Walls");
+		if(count > 400) {
+			gcs_send_text(MAV_SEVERITY_INFO, "Centering Between Front and Back Walls");
+		}
     }
+	++count;
 
     return;
 }
 //LOGGING:
-void Copter::logging(ifstream &os,int counter,float &dist_forward, 
+void Copter::logging(ofstream &os,int counter,float &dist_forward, 
     float &dist_right, float &dist_backward, float &dist_left, Vector3f &accel,float &pitch,float &roll) const{
-    os<<counter<<","<<dist_right<<","<<dist_backward<<","<<dist_left<<","<<dist_forward<<","<<accel.getX()<<","<<
-    accel.getY()<<","<<pitch<<","<<roll<<endl;
+    os<<counter<<","<<dist_right<<","<<dist_backward<<","<<dist_left<<","<<dist_forward<<","<<accel.x<<","<<
+    accel.y<<","<<pitch<<","<<roll<<endl;
 }
 

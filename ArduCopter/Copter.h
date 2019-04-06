@@ -22,6 +22,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <cmath>
+#include <fstream>
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -142,11 +143,11 @@ private:
 	Direction backDirection = Direction::right;
 
 	//Threshhold for moving forward, backward, left and right
-	const double distThreshold = g.e100_param1;
+	const float distThreshold = 0.5f;
 
 	//Threshold for telling the drone when it should not center
 	//ex when one wall is too far away
-	const double centerThreshold = g.e100_param2;
+	const float centerThreshold = 0.2f;
 public:
     friend class GCS_MAVLINK_Copter;
     friend class AP_Rally_Copter;
@@ -964,8 +965,8 @@ private:
     bool autonomous_init(bool ignore_checks);
     void autonomous_run();
     bool autonomous_controller(float &target_climb_rate, float &target_roll, float &target_pitch, float &target_yaw_rate);
-	void center_drone(float &target_roll, float &target_pitch, float &dist_forward, float &dist_right, float &dist_backward, float &dist_left);
-    void Copter::logging(ifstream &os,int counter,float &dist_forward, 
+	void center_drone(float &target_roll, float &target_pitch, float &dist_forward, float &dist_right, float &dist_backward, float &dist_left, int count);
+    void logging(std::ofstream &os,int counter,float &dist_forward, 
     float &dist_right, float &dist_backward, float &dist_left, Vector3f &accel,float &pitch,float &roll) const;
 
     void ekf_check();
