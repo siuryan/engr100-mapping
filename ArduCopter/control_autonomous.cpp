@@ -273,7 +273,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     // The C format version to print data for debugiing
     if(counter++ > 400) {
-    	gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for GameOfDrones, C format printing");
+    	gcs_send_text(MAV_SEVERITY_INFO, "one Autonomous flight mode for GameOfDrones, C format printing");
 
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "distThreshold is %.2f \n", distThreshold);
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "centerThreshold is %.2f \n", centerThreshold);
