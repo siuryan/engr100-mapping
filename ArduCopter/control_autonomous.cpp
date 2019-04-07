@@ -236,7 +236,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     }
     
     static int counter = 0;
-    if(counter++ > 400){
+    /*if(counter++ > 400){
 	    gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for GameOfDrones");
 	    //gcs_send_text(MAV_SEVERITY_INFO, s_dist_forward);	
     	
@@ -269,10 +269,10 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
 
 	    counter = 0;
-    }
+    }*/
 
     // The C format version to print data for debugiing
-    /*if(counter++ > 400) {
+    if(counter++ > 400) {
     	gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for GameOfDrones, C format printing");
 
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "distThreshold is %.2f \n", distThreshold);
@@ -283,8 +283,8 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Back: %.2f \n", dist_backward);
 
 
-
-    }*/
+    	counter = 0;
+    }
 
     //Project Implementation Below//
     //                            //
@@ -389,7 +389,7 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
 //LOGGING:
 void Copter::logging(ofstream &os,int counter,float &dist_forward, 
     float &dist_right, float &dist_backward, float &dist_left, Vector3f &accel,float &pitch,float &roll) const{
-    os<<counter<<","<<dist_right<<","<<dist_backward<<","<<dist_left<<","<<dist_forward<<","<<accel.x<<","<<
-    accel.y<<","<<pitch<<","<<roll<<endl;
+    os<<counter<<","<<dist_right<<","<<dist_backward<<","<<dist_left<<","<<dist_forward<<","<<accel.y<<","<<
+    accel.x<<","<<pitch<<","<<roll<<endl;
 }
 
