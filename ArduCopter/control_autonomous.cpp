@@ -221,7 +221,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     //const char *s_dist_forward = to_string(dist_forward).c_str();
 
     static int num_time = time(0) % 10000;
-	static string filename = to_string(num_time) += "mapping_data.txt";
+	static string filename = to_string(num_time) += "mapping_data.csv";
 
 
     static ofstream os(filename);
