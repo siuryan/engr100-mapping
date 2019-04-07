@@ -362,7 +362,7 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
     //then center between left and right walls
     if((backDirection == Direction::front || backDirection == Direction::back) && 
         (dist_right < centerThreshold || dist_left < centerThreshold)){
-        g.pid_roll.set_input_filter_all(dist_right - dist_left);
+        g.pid_roll.set_input_filter_all((dist_right - dist_left) / 2);
         target_roll = 100.0f * g.pid_roll.get_pid();
 
         //Debugging print statements
@@ -374,7 +374,7 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
     //then center between front and back walls
     else if((backDirection == Direction::right || backDirection == Direction::left) && 
         (dist_forward < centerThreshold || dist_backward < centerThreshold)){
-        g.pid_pitch.set_input_filter_all(dist_forward - dist_backward);
+        g.pid_pitch.set_input_filter_all((dist_backward - dist_forward) / 2);
         target_pitch = 100.0f * g.pid_pitch.get_pid();
 
         //Debugging print statements
