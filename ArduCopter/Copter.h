@@ -141,6 +141,7 @@ private:
 	
 	//Variable to keep track of backward direction
 	Direction backDirection = Direction::back;
+	Direction prevBackDirection = Direction::back;
 
 	//Threshhold for moving forward, backward, left and right
 	const float distThreshold = 0.65f;

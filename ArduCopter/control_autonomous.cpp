@@ -282,7 +282,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Front: %.2f \n", dist_forward);
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Back: %.2f \n", dist_backward);*/
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "backDirection: %i \n", backDirection);
-
+	gcs_send_text_fmt(MAV_SEVERITY_INFO, "prevbackDirection: %i \n", prevBackDirection);
     	counter = 0;
     }
 
@@ -302,6 +302,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         target_pitch = 100.0f * g.pid_pitch.get_pid();
         
         //backDirection is now backwards
+	prevBackDirection = backDirection;
         backDirection = Direction::back;
 
 
@@ -319,7 +320,16 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         target_roll = 100.0f * g.pid_roll.get_pid();
 
         //backDirection is now to the left
-        backDirection = Direction::left;
+	//prevBackDirection = backDirection;
+        //backDirection = Direction::left;
+	
+	if(prevBackDirection==Direction::front){
+	  backDirection = Direction::front;
+	}
+	else{
+	  prevBackDirection = backDirection;
+          backDirection = Direction::left;	
+	}	
 
         //Debugging print statements
         if(counter > 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Right");
@@ -330,6 +340,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         target_pitch = 100.0f * g.pid_pitch.get_pid();
 
         //backDirection is now to the front
+	prevBackDirection = backDirection;
         backDirection = Direction::front;
 
         //Debugging print statements
@@ -341,6 +352,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         target_roll = 100.0f * g.pid_roll.get_pid();
 
         //backDirection is now to the right
+	prevBackDirection = backDirection;
         backDirection = Direction::right;
 
         //Debugging print statements
