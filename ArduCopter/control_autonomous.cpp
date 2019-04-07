@@ -273,7 +273,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     // The C format version to print data for debugiing
     if(counter++ > 400) {
-    	gcs_send_text(MAV_SEVERITY_INFO, "Two Autonomous flight mode for GameOfDrones, C format printing \n");
+    	gcs_send_text(MAV_SEVERITY_INFO, "wowowo Autonomous flight mode for GameOfDrones, C format printing \n");
 
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "distThreshold is %.2f \n", distThreshold);
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "centerThreshold is %.2f \n", centerThreshold);
@@ -281,7 +281,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Right: %.2f \n", dist_right);
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Front: %.2f \n", dist_forward);
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Back: %.2f \n", dist_backward);*/
-
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "backDirection: %i \n", backDirection);
 
     	counter = 0;
     }
@@ -303,6 +303,8 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         
         //backDirection is now backwards
         backDirection = Direction::back;
+
+
 
         //Debugging print statements
 	if(counter > 400) {
