@@ -47,8 +47,8 @@ class Localizer:
             v_y = self.velocity_y[i]
             t1 = logs[i]['time']
             t2 = logs[i+1]['time']
-            d_x = v_x*(t2 - t1) + self.position_x[i]
-            d_y = v_y*(t2 - t1) + self.position_y[i]
+            d_x = v_x*(t2 - t1)/1000 + self.position_x[i]
+            d_y = v_y*(t2 - t1)/1000 + self.position_y[i]
             self.position_x.append(d_x)
             self.position_y.append(d_y)
 
@@ -57,16 +57,16 @@ class Localizer:
             # TODO: use angles
             # up
             if logs[i]['l1'] < self.WALL_THRESHOLD:
-                self.walls.append((self.position_x[i], self.position_y[i] + logs[i]['l1']))
+                self.walls.append((self.position_x[i], self.position_y[i] + logs[i]['l1'], i))
             # right
             if logs[i]['l2'] < self.WALL_THRESHOLD:
-                self.walls.append((self.position_x[i] + logs[i]['l2'], self.position_y[i]))
+                self.walls.append((self.position_x[i] + logs[i]['l2'], self.position_y[i], i))
             # down
             if logs[i]['l3'] < self.WALL_THRESHOLD:
-                self.walls.append((self.position_x[i], self.position_y[i] - logs[i]['l3']))
+                self.walls.append((self.position_x[i], self.position_y[i] - logs[i]['l3'], i))
             # left
             if logs[i]['l4'] < self.WALL_THRESHOLD:
-                self.walls.append((self.position_x[i] - logs[i]['l4'], self.position_y[i]))
+                self.walls.append((self.position_x[i] - logs[i]['l4'], self.position_y[i], i))
 
     def get_walls(self):
         return self.walls
