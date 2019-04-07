@@ -361,7 +361,7 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
     //If the back direction is the front or back and the walls are not too far away 
     //then center between left and right walls
     if((backDirection == Direction::front || backDirection == Direction::back) && 
-        (dist_right < centerThreshold && dist_left < centerThreshold)){
+        (dist_right < centerThreshold || dist_left < centerThreshold)){
         g.pid_roll.set_input_filter_all(dist_right - dist_left);
         target_roll = 100.0f * g.pid_roll.get_pid();
 
@@ -373,7 +373,7 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
     //If the back direction is left or right and the walls are not too far away
     //then center between front and back walls
     else if((backDirection == Direction::right || backDirection == Direction::left) && 
-        (dist_forward < centerThreshold && dist_backward < centerThreshold)){
+        (dist_forward < centerThreshold || dist_backward < centerThreshold)){
         g.pid_pitch.set_input_filter_all(dist_forward - dist_backward);
         target_pitch = 100.0f * g.pid_pitch.get_pid();
 
@@ -383,6 +383,10 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
 		}
     }
 	++count;
+	if(count > 400) {
+			gcs_send_text(MAV_SEVERITY_INFO, "Centering running");
+	}
+
 
     return;
 }
