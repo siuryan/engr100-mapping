@@ -236,7 +236,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     }
     
     static int counter = 0;
-    if(counter++ > 400){
+    /*if(counter++ > 400){
 	    gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for GameOfDrones");
 	    //gcs_send_text(MAV_SEVERITY_INFO, s_dist_forward);	
     	
@@ -269,22 +269,22 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
 
 	    counter = 0;
-    }
+    }*/
 
     // The C format version to print data for debugiing
-    /*if(counter++ > 400) {
-    	gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for GameOfDrones, C format printing");
+    if(counter++ > 400) {
+    	gcs_send_text(MAV_SEVERITY_INFO, "wowowo Autonomous flight mode for GameOfDrones, C format printing \n");
 
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "distThreshold is %.2f \n", distThreshold);
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "centerThreshold is %.2f \n", centerThreshold);
-    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Left: %.2f \n", dist_left);
+    	/*gcs_send_text_fmt(MAV_SEVERITY_INFO, "Left: %.2f \n", dist_left);
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Right: %.2f \n", dist_right);
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Front: %.2f \n", dist_forward);
-    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Back: %.2f \n", dist_backward);
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Back: %.2f \n", dist_backward);*/
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "backDirection: %i \n", backDirection);
 
-
-
-    }*/
+    	counter = 0;
+    }
 
     //Project Implementation Below//
     //                            //
@@ -303,6 +303,8 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         
         //backDirection is now backwards
         backDirection = Direction::back;
+
+
 
         //Debugging print statements
 	if(counter > 400) {
@@ -346,9 +348,9 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     }
 
     // need a landing command, uncomment later...
-    /*else {
+    else {
     	return false;
-    }*/
+    }
     
    
     return true;
@@ -361,8 +363,8 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
     //If the back direction is the front or back and the walls are not too far away 
     //then center between left and right walls
     if((backDirection == Direction::front || backDirection == Direction::back) && 
-        (dist_right < centerThreshold && dist_left < centerThreshold)){
-        g.pid_roll.set_input_filter_all(dist_right - dist_left);
+        (dist_right < centerThreshold || dist_left < centerThreshold)){
+        g.pid_roll.set_input_filter_all((dist_right - dist_left) / 2);
         target_roll = 100.0f * g.pid_roll.get_pid();
 
         //Debugging print statements
@@ -373,8 +375,8 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
     //If the back direction is left or right and the walls are not too far away
     //then center between front and back walls
     else if((backDirection == Direction::right || backDirection == Direction::left) && 
-        (dist_forward < centerThreshold && dist_backward < centerThreshold)){
-        g.pid_pitch.set_input_filter_all(dist_forward - dist_backward);
+        (dist_forward < centerThreshold || dist_backward < centerThreshold)){
+        g.pid_pitch.set_input_filter_all((dist_backward - dist_forward) / 2);
         target_pitch = 100.0f * g.pid_pitch.get_pid();
 
         //Debugging print statements
@@ -383,13 +385,17 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
 		}
     }
 	++count;
+	if(count > 400) {
+			gcs_send_text(MAV_SEVERITY_INFO, "Centering running");
+	}
+
 
     return;
 }
 //LOGGING:
 void Copter::logging(ofstream &os,int counter,float &dist_forward, 
     float &dist_right, float &dist_backward, float &dist_left, Vector3f &accel,float &pitch,float &roll) const{
-    os<<counter<<","<<dist_right<<","<<dist_backward<<","<<dist_left<<","<<dist_forward<<","<<accel.x<<","<<
-    accel.y<<","<<pitch<<","<<roll<<endl;
+    os<<counter<<","<<dist_right<<","<<dist_backward<<","<<dist_left<<","<<dist_forward<<","<<accel.y<<","<<
+    accel.x<<","<<pitch<<","<<roll<<endl;
 }
 

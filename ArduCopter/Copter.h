@@ -140,14 +140,14 @@ class Copter : public AP_HAL::HAL::Callbacks {
 private:
 	
 	//Variable to keep track of backward direction
-	Direction backDirection = Direction::right;
+	Direction backDirection = Direction::back;
 
 	//Threshhold for moving forward, backward, left and right
-	const float distThreshold = 0.5f;
+	const float distThreshold = 0.65f;
 
 	//Threshold for telling the drone when it should not center
 	//ex when one wall is too far away
-	const float centerThreshold = 0.2f;
+	const float centerThreshold = 0.4f;
 public:
     friend class GCS_MAVLINK_Copter;
     friend class AP_Rally_Copter;
