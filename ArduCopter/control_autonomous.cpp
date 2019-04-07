@@ -220,7 +220,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     //const char *s_dist_forward = to_string(dist_forward).c_str();
 
-    static int num_time = time(0) % 10000;
+    static int num_time = time(0);
 	static string filename = to_string(num_time) += "mapping_data.csv";
 
 
@@ -273,7 +273,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     // The C format version to print data for debugiing
     if(counter++ > 400) {
-    	gcs_send_text(MAV_SEVERITY_INFO, "wowowo Autonomous flight mode for GameOfDrones, C format printing \n");
+    	gcs_send_text(MAV_SEVERITY_INFO, "yyyyyy Autonomous flight mode for GameOfDrones, C format printing \n");
 
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "distThreshold is %.2f \n", distThreshold);
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "centerThreshold is %.2f \n", centerThreshold);
@@ -392,7 +392,7 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
     //If the back direction is the front or back and the walls are not too far away 
     //then center between left and right walls
     if((backDirection == Direction::front || backDirection == Direction::back) && 
-        (dist_right < centerThreshold || dist_left < centerThreshold)){
+        ((dist_right < centerThreshold && dist_left < distThreshold) || (dist_left < centerThreshold && dist_right < distThreshold))){
         g.pid_roll.set_input_filter_all((dist_right - dist_left) / 2);
         target_roll = 100.0f * g.pid_roll.get_pid();
 
@@ -404,7 +404,7 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
     //If the back direction is left or right and the walls are not too far away
     //then center between front and back walls
     else if((backDirection == Direction::right || backDirection == Direction::left) && 
-        (dist_forward < centerThreshold || dist_backward < centerThreshold)){
+        ((dist_forward < centerThreshold && dist_backward < distThreshold)|| (dist_backward < centerThreshold && dist_forward < distThreshold))){
         g.pid_pitch.set_input_filter_all((dist_backward - dist_forward) / 2);
         target_pitch = 100.0f * g.pid_pitch.get_pid();
 
