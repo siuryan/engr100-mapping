@@ -282,7 +282,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Front: %.2f \n", dist_forward);
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Back: %.2f \n", dist_backward);*/
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "backDirection: %i \n", backDirection);
-	gcs_send_text_fmt(MAV_SEVERITY_INFO, "prevbackDirection: %i \n", prevBackDirection);
+	    gcs_send_text_fmt(MAV_SEVERITY_INFO, "prevbackDirection: %i \n", prevBackDirection);
     	counter = 0;
     }
 
@@ -297,62 +297,61 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     //Assuming back direction is not the front and the sensors detect 
     //a reasonable distance then move the drone forward
-    if(backDirection != Direction::front && dist_forward > distThreshold){
-        g.pid_pitch.set_input_filter_all(distThreshold - dist_forward);
-        target_pitch = 100.0f * g.pid_pitch.get_pid();
-        
-        //backDirection is now backwards
-	static int count = 0; 
-	if(count == 0){
-	 prevBackDirection = backDirection;
-	 ++count;	
-	}
-        backDirection = Direction::back;
-
-
-
-        //Debugging print statements
-	if(counter > 400) {
-		gcs_send_text(MAV_SEVERITY_INFO, "Moving Forward");
-	}
-        
-    }
-    //Move the drone to the right
-    else if(backDirection != Direction::right && dist_right > distThreshold){
+    if(backDirection != Direction::right && dist_right > distThreshold){
         //Positive roll should be to the right
         g.pid_roll.set_input_filter_all(dist_right - distThreshold);
         target_roll = 100.0f * g.pid_roll.get_pid();
 
         //backDirection is now to the left
 	//prevBackDirection = backDirection;
-        //backDirection = Direction::left;
+        backDirection = Direction::left;
 	
-	if(prevBackDirection==Direction::left){
-	  backDirection = Direction::front;
-	}
-	else{
-	 static int count = 0; 
-	 if(count == 0){
-	  prevBackDirection = backDirection;
-	  ++count;	
-	 }
-          backDirection = Direction::left;	
-	}	
+        // if(prevBackDirection==Direction::left){
+        // backDirection = Direction::front;
+        // }
+        // else{
+        // static int count = 0; 
+        // if(count == 0){
+        // prevBackDirection = backDirection;
+        // ++count;	
+        // }
+        //     backDirection = Direction::left;	
+        // }	
 
         //Debugging print statements
         if(counter > 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Right");
     }
+    else if(backDirection != Direction::front && dist_forward > distThreshold){
+        g.pid_pitch.set_input_filter_all(distThreshold - dist_forward);
+        target_pitch = 100.0f * g.pid_pitch.get_pid();
+        
+        //backDirection is now backwards
+        // static int count = 0; 
+        // if(count == 0){
+        // prevBackDirection = backDirection;
+        // ++count;	
+        // }
+        backDirection = Direction::back;
+
+
+        //Debugging print statements
+        if(counter > 400) {
+            gcs_send_text(MAV_SEVERITY_INFO, "Moving Forward");
+        }   
+    }
+    //Move the drone to the right
+    
     //Move the drone backward
     else if(backDirection != Direction::back && dist_backward > distThreshold){
         g.pid_pitch.set_input_filter_all(dist_backward - distThreshold);
         target_pitch = 100.0f * g.pid_pitch.get_pid();
 
         //backDirection is now to the front
-	static int count = 0; 
-	if(count == 0){
-	 prevBackDirection = backDirection;
-	 ++count;	
-	}
+        // static int count = 0; 
+        // if(count == 0){
+        // prevBackDirection = backDirection;
+        // ++count;	
+        // }
 
 
         backDirection = Direction::front;
@@ -361,20 +360,20 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         if(counter > 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Backward");
     }
     //Move the drone to the left
-    else if(backDirection != Direction::left && prevBackDirection!=Direction::front && dist_left > distThreshold){
+    else if(backDirection != Direction::left && dist_left > distThreshold){
         g.pid_roll.set_input_filter_all(distThreshold - dist_left);
         target_roll = 100.0f * g.pid_roll.get_pid();
 
         //backDirection is now to the right
-	static int count = 0; 
-	if(count == 0){
-	 prevBackDirection = backDirection;
-	 ++count;	
-	}
-        backDirection = Direction::right;
+        // static int count = 0; 
+        // if(count == 0){
+        // prevBackDirection = backDirection;
+        // ++count;	
+        // }
+            backDirection = Direction::right;
 
-        //Debugging print statements
-        if(counter > 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Left");
+            //Debugging print statements
+            if(counter > 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Left");
     }
 
     // need a landing command, uncomment later...
