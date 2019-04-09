@@ -144,7 +144,7 @@ private:
 	Direction prevBackDirection = Direction::back;
 
 	//Threshhold for moving forward, backward, left and right
-	const float distThreshold = 0.65f;
+	const float distThreshold = 0.55f;
 
 	//Threshold for telling the drone when it should not center
 	//ex when one wall is too far away

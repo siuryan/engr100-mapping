@@ -277,10 +277,10 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "distThreshold is %.2f \n", distThreshold);
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "centerThreshold is %.2f \n", centerThreshold);
-    	/*gcs_send_text_fmt(MAV_SEVERITY_INFO, "Left: %.2f \n", dist_left);
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Left: %.2f \n", dist_left);
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Right: %.2f \n", dist_right);
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Front: %.2f \n", dist_forward);
-    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Back: %.2f \n", dist_backward);*/
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "Back: %.2f \n", dist_backward);	
     	gcs_send_text_fmt(MAV_SEVERITY_INFO, "backDirection: %i \n", backDirection);
 	    gcs_send_text_fmt(MAV_SEVERITY_INFO, "prevbackDirection: %i \n", prevBackDirection);
     	counter = 0;
