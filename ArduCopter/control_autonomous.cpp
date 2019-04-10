@@ -296,14 +296,14 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     dist_right, dist_backward, dist_left, counter);
 
     //Assuming back direction is not the front and the sensors detect 
-    //a reasonable distance then move the drone forward
+    //a reasonable distance move the drone to the right 
     if(backDirection != Direction::right && dist_right > distThreshold){
         //Positive roll should be to the right
         g.pid_roll.set_input_filter_all(dist_right - distThreshold);
         target_roll = 100.0f * g.pid_roll.get_pid();
 
         //backDirection is now to the left
-	//prevBackDirection = backDirection;
+	    //prevBackDirection = backDirection;
         backDirection = Direction::left;
 	
         // if(prevBackDirection==Direction::left){
@@ -321,6 +321,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
         //Debugging print statements
         if(counter > 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Right");
     }
+    //Move the drone forward
     else if(backDirection != Direction::front && dist_forward > distThreshold){
         g.pid_pitch.set_input_filter_all(distThreshold - dist_forward);
         target_pitch = 100.0f * g.pid_pitch.get_pid();
@@ -339,8 +340,6 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
             gcs_send_text(MAV_SEVERITY_INFO, "Moving Forward");
         }   
     }
-    //Move the drone to the right
-    
     //Move the drone backward
     else if(backDirection != Direction::back && dist_backward > distThreshold){
         g.pid_pitch.set_input_filter_all(dist_backward - distThreshold);
@@ -376,7 +375,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
             if(counter > 400) gcs_send_text(MAV_SEVERITY_INFO, "Moving Left");
     }
 
-    // need a landing command, uncomment later...
+    // Landing
     else {
     	return false;
     }
@@ -421,6 +420,7 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
 
     return;
 }
+
 //LOGGING:
 void Copter::logging(ofstream &os,int counter,float &dist_forward, 
     float &dist_right, float &dist_backward, float &dist_left, Vector3f &accel,float &pitch,float &roll) const{
@@ -428,3 +428,54 @@ void Copter::logging(ofstream &os,int counter,float &dist_forward,
     accel.x<<","<<pitch<<","<<roll<<endl;
 }
 
+//Avoid walls
+void Copter::avoid_wall(float &target_roll, float &target_pitch, float &dist_forward, 
+    float &dist_right, float &dist_backward, float &dist_left, int count){
+    
+    //If drone is too close to front wall then move backward 
+    if(dist_forward < avoidThreshold){
+        g.pid_pitch.set_input_filter_all(avoidThreshold - dist_forward);
+        target_pitch = 100.0f * g.pid_pitch.get_pid();
+
+        //Debugging print statements
+		if(count > 400) {
+        	gcs_send_text(MAV_SEVERITY_INFO, "Avoiding front wall");
+		}
+    }
+
+    //If drone is too close to back wall then move forward
+    if(dist_backward < avoidThreshold){
+        g.pid_pitch.set_input_filter_all(dist_backward - avoidThreshold);
+        target_pitch = 100.0f * g.pid_pitch.get_pid();
+
+        //Debugging print statements
+		if(count > 400) {
+        	gcs_send_text(MAV_SEVERITY_INFO, "Avoiding back wall");
+		}
+    }
+
+    //If drone is too close to right wall then move left
+    if(dist_right < avoidThreshold){
+        g.pid_roll.set_input_filter_all(dist_right - avoidThreshold);
+        target_roll = 100.0f * g.pid_roll.get_pid();
+
+        //Debugging print statements
+		if(count > 400) {
+        	gcs_send_text(MAV_SEVERITY_INFO, "Avoiding left wall");
+		}
+    }
+
+    //If drone is too close to left wall then move right
+    if(dist_left < avoidThreshold){
+        g.pid_roll.set_input_filter_all(avoidThreshold - dist_left);
+        target_roll = 100.0f * g.pid_roll.get_pid();
+
+        //Debugging print statements
+		if(count > 400) {
+        	gcs_send_text(MAV_SEVERITY_INFO, "Avoiding right wall");
+		}
+    }
+
+    ++count;
+    return;
+}

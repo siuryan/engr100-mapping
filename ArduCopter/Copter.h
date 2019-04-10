@@ -149,6 +149,9 @@ private:
 	//Threshold for telling the drone when it should not center
 	//ex when one wall is too far away
 	const float centerThreshold = 0.4f;
+
+    //Threshold for telling the drone when it should move away from obstacle
+    const float avoidThreshold = 0.4f;
 public:
     friend class GCS_MAVLINK_Copter;
     friend class AP_Rally_Copter;
@@ -968,7 +971,10 @@ private:
     bool autonomous_controller(float &target_climb_rate, float &target_roll, float &target_pitch, float &target_yaw_rate);
 	void center_drone(float &target_roll, float &target_pitch, float &dist_forward, float &dist_right, float &dist_backward, float &dist_left, int count);
     void logging(std::ofstream &os,int counter,float &dist_forward, 
-    float &dist_right, float &dist_backward, float &dist_left, Vector3f &accel,float &pitch,float &roll) const;
+        float &dist_right, float &dist_backward, float &dist_left, Vector3f &accel,float &pitch,float &roll) const;
+    void avoid_wall(float &target_roll, float &target_pitch, float &dist_forward, 
+        float &dist_right, float &dist_backward, float &dist_left, int count);
+    
 
     void ekf_check();
     bool ekf_over_threshold();
