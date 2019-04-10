@@ -271,7 +271,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 	    counter = 0;
     }*/
 
-    // The C format version to print data for debugiing
+    // The C format version to print data for debuging
     if(counter++ > 400) {
     	gcs_send_text(MAV_SEVERITY_INFO, "yyyyyy Autonomous flight mode for GameOfDrones, C format printing \n");
 
