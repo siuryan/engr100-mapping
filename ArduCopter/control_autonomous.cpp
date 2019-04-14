@@ -236,40 +236,6 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     }
     
     static int counter = 0;
-    /*if(counter++ > 400){
-	    gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for GameOfDrones");
-	    //gcs_send_text(MAV_SEVERITY_INFO, s_dist_forward);	
-    	
-
-	    //Debugging print statements - Make sure the thresholds are actually set on Mission Planner
-	    //Check to make sure the variable is accessible
-	    const char *ptr_distThreshold = to_string(distThreshold).c_str();
-	    const char *ptr_centerThreshold = to_string(centerThreshold).c_str();
-
-	    gcs_send_text(MAV_SEVERITY_INFO, "distThreshold");
-		gcs_send_text(MAV_SEVERITY_INFO, ptr_distThreshold);
-		gcs_send_text(MAV_SEVERITY_INFO, "centerThreshold");
-	    gcs_send_text(MAV_SEVERITY_INFO, ptr_centerThreshold);
-
-	    // Print the four lidars readings to see if they are correct (might be out of range and cause problems)
-
-	    // print each message in a line
-	    const char *ptr_left = to_string(dist_left).c_str();
-	    const char *ptr_right = to_string(dist_right).c_str();
-	    const char *ptr_front = to_string(dist_forward).c_str();
-	    const char *ptr_back = to_string(dist_backward).c_str();
-	    gcs_send_text(MAV_SEVERITY_INFO, "Left");
-	    gcs_send_text(MAV_SEVERITY_INFO, ptr_left);
-	    gcs_send_text(MAV_SEVERITY_INFO, "Right");
-	    gcs_send_text(MAV_SEVERITY_INFO, ptr_right);
-	    gcs_send_text(MAV_SEVERITY_INFO, "Front");
-	    gcs_send_text(MAV_SEVERITY_INFO, ptr_front);
-	    gcs_send_text(MAV_SEVERITY_INFO, "Back");
-	    gcs_send_text(MAV_SEVERITY_INFO, ptr_back);
-
-
-	    counter = 0;
-    }*/
 
     // The C format version to print data for debuging
     if(counter++ > 400) {
@@ -377,6 +343,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     // Landing
     else {
+    	os.close();
     	return false;
     }
     
@@ -412,6 +379,7 @@ void Copter::center_drone(float &target_roll, float &target_pitch, float &dist_f
 			gcs_send_text(MAV_SEVERITY_INFO, "Centering Between Front and Back Walls");
 		}
     }
+    
 	++count;
 	if(count > 400) {
 			gcs_send_text(MAV_SEVERITY_INFO, "Centering running");
