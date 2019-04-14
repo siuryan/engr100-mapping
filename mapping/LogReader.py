@@ -21,8 +21,8 @@ class LogReader:
                     'l2': float(row[2]),
                     'l3': float(row[3]),
                     'l4': float(row[4]),
-                    'a_y': float(row[5]),
-                    'a_x': float(row[6]),
+                    'a_x': float(row[5]),
+                    'a_y': float(row[6]),
                     'pitch': float(row[7]),
                     'roll': float(row[8])
                 }
