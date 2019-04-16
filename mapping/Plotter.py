@@ -28,6 +28,8 @@ class Plotter:
 
     def _plot_settings(self):
         plt.axis('equal')
+        plt.xlabel('x (m)')
+        plt.ylabel('y (m)')
         fig = plt.gcf()
 
         def pickpoint(event):

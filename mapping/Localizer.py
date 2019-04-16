@@ -120,10 +120,19 @@ class Localizer:
             d_l3 = logs[i+1]['l3']*math.cos(math.radians(roll)) - l3
             d_l4 = logs[i+1]['l4']*math.cos(math.radians(roll)) - l4
 
+            if abs(d_l1) > 0.03:
+                d_l1 = 0
+            if abs(d_l2) > 0.03:
+                d_l2 = 0
+            if abs(d_l3) > 0.03:
+                d_l3 = 0
+            if abs(d_l4) > 0.03:
+                d_l4 = 0
+
             if l1 < self.WALL_THRESHOLD:
-                pos_y += d_l1*3
+                pos_y -= d_l1*3
             elif l3 < self.WALL_THRESHOLD:
-                pos_y -= d_l3*3
+                pos_y += d_l3*3
 
             if l2 < self.WALL_THRESHOLD:
                 pos_x -= d_l2*3
