@@ -9,7 +9,7 @@ def main():
     #log_reader.read_logs('1555169291mapping_data.csv', False)
     log_reader.read_logs('1555362674mapping_data.csv', False)
     #local = Localizer(log_reader.get_logs(), 2, 0, 0.2, 0.05, 0.7)
-    local = Localizer(log_reader.get_logs(), 1, 0, 0.2, 0.05, 0.7)
+    local = Localizer(log_reader.get_logs(), 1, 0, 0.2, 0.04, 0.7)
 
     x = local.get_positions_x()
     y = local.get_positions_y()

@@ -104,8 +104,8 @@ class Localizer:
         pos_x = 0
         pos_y = 0
 
-        self.position_x = []
-        self.position_y = []
+        #self.position_x = []
+        #self.position_y = []
 
         for i in range(len(logs) - 1):
             pitch = logs[i]['pitch']/100
@@ -130,31 +130,31 @@ class Localizer:
                 d_l4 = 0
 
             if l1 < self.WALL_THRESHOLD:
-                pos_y -= d_l1*3
+                pos_y -= d_l1*5
             elif l3 < self.WALL_THRESHOLD:
-                pos_y += d_l3*3
+                pos_y += d_l3*5
 
             if l2 < self.WALL_THRESHOLD:
-                pos_x -= d_l2*3
+                pos_x -= d_l2*5
             elif l3 < self.WALL_THRESHOLD:
-                pos_x += d_l4*3
+                pos_x += d_l4*5
 
             print (pos_x, pos_y)
 
-            self.position_x.append(pos_x)
-            self.position_y.append(pos_y)
+            #self.position_x.append(pos_x)
+            #self.position_y.append(pos_y)
 
             if l1 < self.WALL_THRESHOLD:
-                self.walls.append((pos_x, pos_y + l1, i))
+                self.walls.append((pos_x + 2, pos_y + l1 + 1, i))
             # right
             if l2 < self.WALL_THRESHOLD:
-                self.walls.append((pos_x + l2, pos_y, i))
+                self.walls.append((pos_x + l2 + 2, pos_y + 1, i))
             # down
             if l3 < self.WALL_THRESHOLD:
-                self.walls.append((pos_x, pos_y - l3, i))
+                self.walls.append((pos_x + 2, pos_y - l3 + 1, i))
             # left
             if l4 < self.WALL_THRESHOLD:
-                self.walls.append((pos_x - l4, pos_y, i))
+                self.walls.append((pos_x - l4 + 2, pos_y + 1, i))
 
     def get_walls(self):
         return self.walls
